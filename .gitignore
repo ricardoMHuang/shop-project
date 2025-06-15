@@ -1,1 +1,6 @@
-/shop-vite-web/
+# Java/Maven项目标准忽略规则
+/target/
+*.iml
+.idea/
+*.log
+/shop-management/target/
