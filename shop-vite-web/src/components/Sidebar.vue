@@ -8,6 +8,10 @@
       </router-link>
       <router-link to="/shops" class="nav-item" active-class="active" title="店铺管理">
         <Grid />
+        <span v-if="!isCollapsed">展示面板</span>
+      </router-link>
+      <router-link to="/shop-manager" class="nav-item" active-class="active" title="店铺管理">
+        <Grid />
         <span v-if="!isCollapsed">店铺管理</span>
       </router-link>
     </nav>
