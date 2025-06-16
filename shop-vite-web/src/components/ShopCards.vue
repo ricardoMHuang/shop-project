@@ -21,23 +21,68 @@
         :class="shop.status"
         @click="openDialog(shop)"
     >
-      <h2>{{ shop.name }}</h2>
-      <p>{{ shop.address }}</p>
-      <p>{{ shop.phone }}</p>
+      <h2 class="shop-name">{{ shop.name }}</h2>
+      <div class="shop-info">
+        <p class="shop-item">
+          <span class="label">地址：</span>
+          <span class="value">{{ shop.address }}</span>
+        </p>
+        <p class="shop-item">
+          <span class="label">电话：</span>
+          <span class="value">{{ shop.phone }}</span>
+        </p>
+        <p class="shop-item">
+          <span class="label">营业时间：</span>
+          <span class="value">{{ shop.openingHours }}</span>
+        </p>
+        <p class="shop-item">
+          <span class="label">负责人：</span>
+          <span class="value">{{ shop.manager }}</span>
+        </p>
+        <p class="shop-item">
+          <span class="label">描述：</span>
+          <span class="value">{{ shop.description }}</span>
+        </p>
+      </div>
     </div>
 
-    <!-- 弹窗，内容改为插槽 -->
+    <!-- 弹窗：改成自带内容 -->
+    <!-- 弹窗 -->
     <el-dialog
         title="店铺详情"
-        v-model:visible="showDialog"
-        width="400px"
-        @close="closeDialog"
+        v-model="showDialog"
+        width="500px"
+        class="shop-dialog"
     >
-      <slot name="dialog" :shop="selectedShop" />
+      <div v-if="selectedShop" class="shop-dialog-content">
+        <h3 class="shop-dialog-title">{{ selectedShop.name }}</h3>
+        <el-divider></el-divider>
+        <div class="shop-dialog-item">
+          <span class="label">📍 地址：</span>
+          <span class="value">{{ selectedShop.address }}</span>
+        </div>
+        <div class="shop-dialog-item">
+          <span class="label">📞 电话：</span>
+          <span class="value">{{ selectedShop.phone }}</span>
+        </div>
+        <div class="shop-dialog-item">
+          <span class="label">⏰ 营业时间：</span>
+          <span class="value">{{ selectedShop.openingHours }}</span>
+        </div>
+        <div class="shop-dialog-item">
+          <span class="label">👤 负责人：</span>
+          <span class="value">{{ selectedShop.manager }}</span>
+        </div>
+        <div class="shop-dialog-item">
+          <span class="label">📝 描述：</span>
+          <span class="value">{{ selectedShop.description }}</span>
+        </div>
+      </div>
       <template #footer>
-        <el-button @click="closeDialog">关闭</el-button>
+        <el-button type="primary" @click="closeDialog">关闭</el-button>
       </template>
     </el-dialog>
+
   </div>
 </template>
 
@@ -64,21 +109,23 @@ const showDialog = ref(false)
 const selectedShop = ref(null)
 const currentStatus = ref('all')
 
-// 支持父组件自定义按钮
+// 支持自定义按钮
 const mergedButtons = computed(() => props.buttons)
 
-// 过滤逻辑
+// 过滤店铺
 const filteredShops = computed(() => {
   return currentStatus.value === 'all'
       ? props.shops
       : props.shops.filter(shop => shop.status === currentStatus.value)
 })
 
-const openDialog = shop => {
+// 打开弹窗
+const openDialog = (shop) => {
   selectedShop.value = shop
   showDialog.value = true
 }
 
+// 关闭弹窗
 const closeDialog = () => {
   showDialog.value = false
   selectedShop.value = null
@@ -86,7 +133,7 @@ const closeDialog = () => {
 </script>
 
 <style scoped>
-/* 与之前一致，可保留 */
+/* 样式与原版一致，可保留 */
 .shop-container {
   display: flex;
   flex-wrap: wrap;
@@ -96,19 +143,20 @@ const closeDialog = () => {
 }
 
 .shop-card {
-  width: 140px;
-  height: 200px;
-  padding: 20px;
+  width: 200px;
+  min-height: 220px;
+  padding: 20px 15px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(31, 38, 135, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .shop-card.normal {
@@ -190,4 +238,76 @@ const closeDialog = () => {
 .filter-button-group .filter-button + .filter-button {
   border-left: 1px solid #ddd;
 }
+
+.shop-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #fff;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shop-item {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.shop-item .label {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.shop-item .value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 弹窗内部美化 */
+.shop-dialog-content {
+  padding: 10px;
+}
+
+.shop-dialog-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.shop-dialog-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.shop-dialog-item .label {
+  flex-shrink: 0;
+  width: 80px;
+  font-weight: 600;
+  color: #666;
+}
+
+.shop-dialog-item .value {
+  flex: 1;
+  word-break: break-word;
+}
+
+.shop-dialog .el-dialog__body {
+  padding-top: 0;
+}
+
+.shop-dialog .el-divider {
+  margin: 10px 0 20px;
+}
+
 </style>
